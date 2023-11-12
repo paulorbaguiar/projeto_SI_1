@@ -33,21 +33,56 @@ distancias_reais = {1 : [(2, "azul", 10)],
                     13 : [(13, "vermelha", 18.7), (13, "verde", 18.8), (14, "verde", 5.1)],
                     14 : [(14, "verde", 5.1)]}
 
-def a_estrela(origem, destino):
-    fronteiras_abertas = []
-    fronteiras_abertas.append(origem)
-    dic_aux = {}
+
+#Algoritmo A* funcionando aparentemente. É preciso pesar a gora em como retornar o tempo e levar em consideração a baldeação
+def a_estrela(origem, cor ,destino):
+    fronteiras_abertas = [] 
+    fronteiras_fechadas = []
+
+    g = 0
+    h = distancias_diretas[origem-1][destino-1]
+    f = g + h
+    linha_cor = cor
     
-    while(fronteiras_abertas != 0):
-        estado_atual = origem
-        vizinhos = distancias_reais[estado_atual] #colocando a lista de tuplas para estabelecer vizinhos
-        for i in vizinhos:
-            fronteiras_abertas.append(i[0]) #colocar os proximos estados na fronteira
-            dic_aux[i[0]] = (i[1], i[2])
-            
-            
-a_estrela(2, 8)
+    fronteiras_abertas.append((origem, g, h, f, None, linha_cor)) #Primeiro no a lista. NONE é o lugar da upla para o pai daquele nó
 
+    while fronteiras_abertas != 0 :
+
+        fronteiras_abertas = sorted(fronteiras_abertas, key = lambda x : x[3]) #ordenando as fronteiras de acordo com o indice 3 das uplas  
         
+        #pegar informações para realizar o algoritmo e remover nó das fronteiras fechadas
+        estado_atual = fronteiras_abertas[0][0]
+        g = fronteiras_abertas[0][1]
+        no_pai = fronteiras_abertas[0][4]
+        fronteiras_abertas.pop(0) 
+
+        if estado_atual != destino:
+
+            fronteiras_fechadas.append(estado_atual) #Adcionando nós as fronteiras fechadas
+
+            #Abrindo a fronteira e estabelecendo as próximas
+            for vizinho, linha, dist_real in distancias_reais[estado_atual]:
+                if vizinho not in fronteiras_fechadas:
+                    g_vizinho = g + dist_real
+                    h_vizinho = distancias_diretas[vizinho-1][destino-1]
+                    f_vizinho = g_vizinho + h_vizinho
+                    linha_cor_vizinho = linha
+                    fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho))
+            
+        else:
+
+            caminho_mais_rapido = [estado_atual] #lista para o melhor caminho
+            
+            #Adcionando o estação do último até o primeiro
+            for i in range(len(fronteiras_fechadas) - 1, -1, -1):
+                caminho_mais_rapido.append(fronteiras_fechadas[i])
+            caminho_mais_rapido.reverse() #revertendo a lista para primeira estação até a última
+
+            print("Caminho mais rápido até o seu destino é: ")
+            print(caminho_mais_rapido)
+
+            return
 
             
+            
+a_estrela(1, "azul", 8) 
