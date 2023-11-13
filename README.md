@@ -1,3 +1,3 @@
 # projeto_SI_1
 
-O A* foi implementado. Precisa agora apenas pensar em como converter os negócios para tempo e considerar a baldeação
+Adcionei a o calculo do tempo e a baldeação
