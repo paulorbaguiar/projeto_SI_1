@@ -1,2 +1,3 @@
 # projeto_SI_1
-Primeiro projeto para a cadeira de sistemas inteligentes
+
+O A* foi implementado. Precisa agora apenas pensar em como converter os negócios para tempo e considerar a baldeação
