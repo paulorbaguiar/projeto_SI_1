@@ -1,4 +1,4 @@
-#listas com distancia direta de estação até as demais (tabela 1)
+# listas com distancia direta de estação até as demais (tabela 1)
 est_dir_1 = [0.0, 10.0, 18.5, 24.8, 36.4, 38.8, 35.8, 25.4, 17.6, 9.1, 16.7, 27.3, 27.6, 29.8]
 est_dir_2 = [10.0, 0.0, 8.5, 14.8, 26.6, 29.1, 26.1, 17.3, 10.0, 3.5, 15.5, 20.9, 19.1, 21.8]
 est_dir_3 = [18.5, 8.5, 0.0, 6.3, 18.2, 20.6, 17.6, 13.6, 9.4, 10.3, 19.5, 19.1, 12.1, 16.6]
@@ -17,7 +17,7 @@ est_dir_14 = [29.8, 21.8, 16.6, 15.4, 17.9, 18.2, 15.6, 27.6, 26.6, 21.2, 35.5, 
 distancias_diretas = [est_dir_1, est_dir_2, est_dir_3, est_dir_4, est_dir_5, est_dir_6, est_dir_7, est_dir_8, est_dir_9, est_dir_10, est_dir_11, est_dir_12, est_dir_13, est_dir_14]
 
 
-#Dicionario contendo o número da estação linkado a uma lista de tuplas (num estação, cor linha, tempo real). (tabela 2)
+# Dicionario contendo o número da estação linkado a uma lista de tuplas (num estação, cor linha, tempo real). (tabela 2)
 distancias_reais = {1 : [(2, "azul", 10)], 
                     2 : [(1, "azul", 10), (3, "azul", 8.5), (10, "amarela", 3.5), (9, "amarela", 10)],
                     3 : [(2, "azul", 8.5), (4, "azul", 6.3), (9, "vermelha", 9.4), (13, "vermelha", 18.7)],
@@ -34,55 +34,68 @@ distancias_reais = {1 : [(2, "azul", 10)],
                     14 : [(14, "verde", 5.1)]}
 
 
-#Algoritmo A* funcionando aparentemente. É preciso pesar a gora em como retornar o tempo e levar em consideração a baldeação
-def a_estrela(origem, cor ,destino):
+# Algoritmo A* funcionando aparentemente. É preciso pesar a gora em como retornar o tempo e levar em consideração a baldeação
+def a_estrela(origem, origem_linha, destino, destino_linha):
     fronteiras_abertas = [] 
     fronteiras_fechadas = []
+    tempo_total = []
 
     g = 0
     h = distancias_diretas[origem-1][destino-1]
     f = g + h
-    linha_cor = cor
+    linha_cor = origem_linha
     
-    fronteiras_abertas.append((origem, g, h, f, None, linha_cor)) #Primeiro no a lista. NONE é o lugar da upla para o pai daquele nó
+    fronteiras_abertas.append((origem, g, h, f, None, linha_cor, 0)) # Primeiro no a lista. NONE é o lugar da upla para o pai daquele nó, 0 é o espaço para o tempo em minutos de um vizinho a outro
 
-    while fronteiras_abertas != 0 :
+    while len(fronteiras_abertas) != 0:
 
-        fronteiras_abertas = sorted(fronteiras_abertas, key = lambda x : x[3]) #ordenando as fronteiras de acordo com o indice 3 das uplas  
+        fronteiras_abertas = sorted(fronteiras_abertas, key = lambda x : x[3]) # ordenando as fronteiras de acordo com o indice 3 das uplas  
         
-        #pegar informações para realizar o algoritmo e remover nó das fronteiras fechadas
+        # pegar informações para realizar o algoritmo e remover nó das fronteiras fechadas
         estado_atual = fronteiras_abertas[0][0]
         g = fronteiras_abertas[0][1]
         no_pai = fronteiras_abertas[0][4]
+        linha_atual = fronteiras_abertas[0][5]
+        tempo_total.append(fronteiras_abertas[0][6])
         fronteiras_abertas.pop(0) 
 
         if estado_atual != destino:
 
-            fronteiras_fechadas.append(estado_atual) #Adcionando nós as fronteiras fechadas
+            fronteiras_fechadas.append(estado_atual) # Adcionando nós as fronteiras fechadas
 
-            #Abrindo a fronteira e estabelecendo as próximas
+            # Abrindo a fronteira e estabelecendo as próximas
             for vizinho, linha, dist_real in distancias_reais[estado_atual]:
                 if vizinho not in fronteiras_fechadas:
                     g_vizinho = g + dist_real
                     h_vizinho = distancias_diretas[vizinho-1][destino-1]
                     f_vizinho = g_vizinho + h_vizinho
                     linha_cor_vizinho = linha
-                    fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho))
+                    tempo_vizinho = dist_real/0.5 # Dividindo a distancioa real por 0.5 para pegar o tempo em minutos
+                    tempo_baldeação = 0 
+                    if linha_cor_vizinho != linha_atual: #Caso a linha do vizinho seja diferente da linha atual, baldeação = 4
+                        tempo_baldeação = 4
+                    fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho, tempo_vizinho+tempo_baldeação))
             
         else:
 
-            caminho_mais_rapido = [estado_atual] #lista para o melhor caminho
+            caminho_mais_rapido = [estado_atual] # lista para o melhor caminho
             
-            #Adcionando o estação do último até o primeiro
+            # Adcionando o estação do último até o primeiro
             for i in range(len(fronteiras_fechadas) - 1, -1, -1):
                 caminho_mais_rapido.append(fronteiras_fechadas[i])
-            caminho_mais_rapido.reverse() #revertendo a lista para primeira estação até a última
+            caminho_mais_rapido.reverse() # revertendo a lista para primeira estação até a última
+
+            tempo_total_soma = sum(tempo_total) 
 
             print("Caminho mais rápido até o seu destino é: ")
             print(caminho_mais_rapido)
+            print(tempo_total_soma)
+
+            break
+
 
             return
 
             
             
-a_estrela(1, "azul", 8) 
+a_estrela(1, "azul", 8, "amarela") 
