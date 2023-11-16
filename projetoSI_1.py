@@ -4,7 +4,7 @@ est_dir_2 = [10.0, 0.0, 8.5, 14.8, 26.6, 29.1, 26.1, 17.3, 10.0, 3.5, 15.5, 20.9
 est_dir_3 = [18.5, 8.5, 0.0, 6.3, 18.2, 20.6, 17.6, 13.6, 9.4, 10.3, 19.5, 19.1, 12.1, 16.6]
 est_dir_4 = [24.8, 14.8, 6.3, 0.0, 12.0, 14.4, 11.5, 12.4, 12.6, 16.7, 23.6, 18.6, 10.6, 15.4]
 est_dir_5 = [36.4, 26.6, 18.2, 12.0, 0.0, 3.0, 2.4, 19.4, 23.3, 28.2, 34.2, 24.8, 14.5, 17.9]
-est_dir_6 = [38.8, 29.1, 20.6, 14.4, 3.0, 0.0, 22.3, 25.7, 30.3, 36.7, 27.6, 15.2, 18.2]
+est_dir_6 = [38.8, 29.1, 20.6, 14.4, 3.0, 0.0, 3.3, 22.3, 25.7, 30.3, 36.7, 27.6, 15.2, 18.2]
 est_dir_7 = [35.8, 26.1, 17.6, 11.5, 2.4, 3.3, 0.0, 20.0, 23.0, 27.3, 34.2, 25.7, 12.4, 15.6]
 est_dir_8 = [25.4, 17.3, 13.6, 12.4, 19.4, 22.3, 20.0, 0.0, 8.2, 20.3, 16.1, 6.4, 22.7, 27.6]
 est_dir_9 = [17.6, 10.0, 9.4, 12.6, 23.3, 25.7, 23.0, 8.2, 0.0, 13.5, 11.2, 10.9, 21.2, 26.6]
@@ -70,7 +70,7 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
                     h_vizinho = distancias_diretas[vizinho-1][destino-1]
                     f_vizinho = g_vizinho + h_vizinho
                     linha_cor_vizinho = linha
-                    tempo_vizinho = dist_real/0.5 # Dividindo a distancioa real por 0.5 para pegar o tempo em minutos
+                    tempo_vizinho = dist_real*2 # multiplicando por 2 para pegar o tempo em minutos
                     tempo_baldeação = 0 
                     if linha_cor_vizinho != linha_atual: #Caso a linha do vizinho seja diferente da linha atual, baldeação = 4
                         tempo_baldeação = 4
@@ -98,4 +98,13 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
 
             
             
-a_estrela(1, "azul", 8, "amarela") 
+print("Qual estação você está: ")
+origem = int(input())
+print("Qual a cor da linha da estação: ")
+cor_origem = input()
+print("Qual estação é o seu destino: ")
+destino = int(input())
+print("Qual a cor da estação de destino: ")
+cor_destino = input()
+
+a_estrela(origem, cor_origem, destino, cor_destino)
