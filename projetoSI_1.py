@@ -45,23 +45,37 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
     f = g + h
     linha_cor = origem_linha
     
-    fronteiras_abertas.append((origem, g, h, f, None, linha_cor, 0)) # Primeiro no a lista. NONE é o lugar da upla para o pai daquele nó, 0 é o espaço para o tempo em minutos de um vizinho a outro
+    fronteiras_abertas.append((origem, g, h, f, None, linha_cor, 0)) # Primeiro nó na lista. NONE é o lugar da tupla para o pai daquele nó, 0 é o espaço para o tempo em minutos de um vizinho a outro
+
+    iteracao = 1  # Contador de iterações
 
     while len(fronteiras_abertas) != 0:
-
-        fronteiras_abertas = sorted(fronteiras_abertas, key = lambda x : x[3]) # ordenando as fronteiras de acordo com o indice 3 das uplas  
         
-        # pegar informações para realizar o algoritmo e remover nó das fronteiras fechadas
+        linhas_destinho = []
+        
+        for i in distancias_reais[destino]:
+            if i[1] not in linhas_destinho:
+                linhas_destinho.append(i[1])
+                
+        if destino_linha not in linhas_destinho:
+            print(f"A estação destino {destino} não esta na linha {destino_linha}. Observe o mapa e tente novamente")
+            break
+        
+        print(f'\nInteração {iteracao}:\nFronteiras abertas: {fronteiras_abertas}')
+
+        fronteiras_abertas = sorted(fronteiras_abertas, key=lambda x: x[3])  # Ordenando as fronteiras de acordo com o índice 3 das tuplas
+        
+        # Pegar informações para realizar o algoritmo e remover nó das fronteiras fechadas
         estado_atual = fronteiras_abertas[0][0]
         g = fronteiras_abertas[0][1]
         no_pai = fronteiras_abertas[0][4]
         linha_atual = fronteiras_abertas[0][5]
         tempo_total.append(fronteiras_abertas[0][6])
-        fronteiras_abertas.pop(0) 
+        fronteiras_abertas.pop(0)
+    
 
         if estado_atual != destino:
-
-            fronteiras_fechadas.append(estado_atual) # Adcionando nós as fronteiras fechadas
+            fronteiras_fechadas.append(estado_atual)  # Adicionando nós às fronteiras fechadas
 
             # Abrindo a fronteira e estabelecendo as próximas
             for vizinho, linha, dist_real in distancias_reais[estado_atual]:
@@ -70,31 +84,29 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
                     h_vizinho = distancias_diretas[vizinho-1][destino-1]
                     f_vizinho = g_vizinho + h_vizinho
                     linha_cor_vizinho = linha
-                    tempo_vizinho = dist_real*2 # multiplicando por 2 para pegar o tempo em minutos
-                    tempo_baldeação = 0 
-                    if linha_cor_vizinho != linha_atual: #Caso a linha do vizinho seja diferente da linha atual, baldeação = 4
-                        tempo_baldeação = 4
-                    fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho, tempo_vizinho+tempo_baldeação))
+                    tempo_vizinho = dist_real * 2  # Multiplicando por 2 para pegar o tempo em minutos
+                    tempo_baldeacao = 0 
+                    if linha_cor_vizinho != linha_atual:  # Caso a linha do vizinho seja diferente da linha atual, baldeação = 4
+                        tempo_baldeacao = 4
+                    fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho, tempo_vizinho + tempo_baldeacao))
             
         else:
-
-            caminho_mais_rapido = [estado_atual] # lista para o melhor caminho
+            caminho_mais_rapido = [estado_atual]  # Lista para o melhor caminho
             
-            # Adcionando o estação do último até o primeiro
+            # Adicionando a estação do último até o primeiro
             for i in range(len(fronteiras_fechadas) - 1, -1, -1):
                 caminho_mais_rapido.append(fronteiras_fechadas[i])
-            caminho_mais_rapido.reverse() # revertendo a lista para primeira estação até a última
+            caminho_mais_rapido.reverse()  # Revertendo a lista para a primeira estação até a última
 
             tempo_total_soma = sum(tempo_total) 
 
-            print("Caminho mais rápido até o seu destino é: ")
+            print("\nCaminho mais rápido até o seu destino é:")
             print(caminho_mais_rapido)
-            print(tempo_total_soma)
+            print(f"O tempo total é de {tempo_total_soma} minutos.")
 
             break
 
-
-            return
+        iteracao += 1
 
             
             
