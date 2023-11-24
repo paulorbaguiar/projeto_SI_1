@@ -74,7 +74,6 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
     
 
         if estado_atual != destino:
-            fronteiras_fechadas.append(estado_atual)  # Adicionando nós às fronteiras fechadas
 
             # Abrindo a fronteira e estabelecendo as próximas
             for vizinho, linha, dist_real in distancias_reais[estado_atual]:
@@ -88,7 +87,10 @@ def a_estrela(origem, origem_linha, destino, destino_linha):
                     if linha_cor_vizinho != linha_atual:  # Caso a linha do vizinho seja diferente da linha atual, baldeação = 4
                         tempo_baldeacao = 4
                     fronteiras_abertas.append((vizinho, g_vizinho, h_vizinho, f_vizinho, estado_atual, linha_cor_vizinho, tempo_vizinho + tempo_baldeacao))
-            
+                    if estado_atual not in fronteiras_fechadas:
+                        fronteiras_fechadas.append(estado_atual)  # Adicionando nós às fronteiras fechadas
+
+
         else:
             caminho_mais_rapido = [estado_atual]  # Lista para o melhor caminho
             
