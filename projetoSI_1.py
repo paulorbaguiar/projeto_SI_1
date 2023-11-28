@@ -44,8 +44,8 @@ def a_estrela(origem, destino):
 
     fronteiras_fechadas = []
 
-    g = {}
-    pais = {}
+    g = {} # Custo real para chegar a cada estado
+    pais = {} # Armazena o pai de cada estado no menor caminho
 
     g[origem] = 0
     pais[origem] = origem
@@ -54,31 +54,34 @@ def a_estrela(origem, destino):
 
         estado_atual = 0
 
-        for estado in fronteiras_abertas:
+        for estado in fronteiras_abertas: # Encontrar o estado na fronteira aberta com o menor custo
 
             if estado_atual == 0:
                 estado_atual = estado
 
+            # Escolher o menor custo para definir o estado atual
             if g[estado] + tempo_direto[estado[0] - 1][destino[0] - 1] < g[estado_atual] + tempo_direto[estado_atual[0] - 1][destino[0] - 1]:
                 estado_atual = estado
         
         if estado_atual != destino:
 
             for (numero, linha, distancia) in vizinho(estado_atual[0]):
-                tupla = (numero, linha)
+                tupla = (numero, linha) # vizinhos do estado atual em formato de tupla
 
-                if tupla not in fronteiras_abertas and tupla not in fronteiras_fechadas:
+                if tupla not in fronteiras_abertas and tupla not in fronteiras_fechadas: # Adcionar tupla como fronteira não explorada
 
                     fronteiras_abertas.append(tupla)
 
                     print(f'Fronteira: {fronteiras_abertas}') 
-
-                    pais[tupla] = estado_atual
-                    g[tupla] = g[estado_atual] + distancia
-
+                    
+                    pais[tupla] = estado_atual # Definir o pai do vizinho como o estado atual
+                    g[tupla] = g[estado_atual] + distancia # Atualizar o custo real para chegar ai vizinho
+                    
+                    # Adcionar baldeação se a linha mudar
                     if estado_atual[1] != tupla[1]:
-                        g[tupla] = g[tupla] + 2
+                        g[tupla] = g[tupla] + 2 # 2 pois todo valor será dobrado no fim
 
+                # Atualizar o custo se um caminho melhor for encontrado
                 else:
                     if g[tupla] > g[estado_atual] + distancia:
                         g[tupla] = g[estado_atual] + distancia
@@ -88,6 +91,8 @@ def a_estrela(origem, destino):
                             fronteiras_abertas.append(tupla)
 
         if (estado_atual == destino) or (estado_atual[0] == destino[0]):
+
+            # Reconstruir o menor caminho
             menor_caminho = []
             while pais[estado_atual] != estado_atual:
                 menor_caminho.append(estado_atual)
@@ -95,13 +100,16 @@ def a_estrela(origem, destino):
 
             menor_caminho.append(origem)
             menor_caminho.reverse()
+
+            # Adcionar a estação destino se a linha for diferente
             if (estado_atual[1] != destino[1]):
                 menor_caminho.append(destino)
                 if destino not in g:
                     g[destino] = g[menor_caminho[len(menor_caminho)-2]] + 2
 
             if menor_caminho[-2] == menor_caminho[-1]:
-                menor_caminho.pop(-1)
+                menor_caminho.pop(-1) # Removendo duplicatas caso necessário
+
             print('O menor caminho até seu destino é ')
             for i in range(0, len(menor_caminho), 1):
                 print(menor_caminho[i])
@@ -112,10 +120,13 @@ def a_estrela(origem, destino):
         fronteiras_fechadas.append(estado_atual)
 
 
-print("Por favor, insira a estação que você está, a cor da linha, a estação destino e a cor da linha destino: ")
+print("Por favor, insira a estação que você está: ")
 origem = int(input())
+print("Por favor, insira a cor da linha da estação que você está: ")
 cor_origem = input()
+print("Por favor, insira a estação destino: ")
 destino = int(input())
+print("Por favor, insira a cor da linha destino: ")
 cor_destino = input()
 
 a_estrela((origem, cor_origem), (destino, cor_destino))
